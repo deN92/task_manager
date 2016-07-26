@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tmanager</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<div>
+
+	<h3><%= link_to "home", root_path%></h3>
+	<div id="authentication">
+		<% if user_signed_in? %>
+			<span><%= current_user.email%></span>
+			<span><%= link_to "Exit", destroy_user_session_path, :method => :delete%></span>
+			<p><%= link_to "Add task", new_task_path %></p>
+		<% end %>
+		<% unless user_signed_in? %>
+			<span id = "up"><%= link_to "Registration", new_user_registration_path%></span>
+			<span id = "sep"><%= "|".html_safe %></span>
+			<span id = "in"><%= link_to "Sign in", new_user_session_path %></span>
+		<%end%>
+	</div>
+
+
+
+</div>
+
+<%= yield %>
+
+</body>
+</html>
