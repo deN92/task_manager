@@ -4,24 +4,33 @@ class TasksController < ApplicationController
 
   def index
     @tasks = Task.all
+    @users = User.order("id")
+    @taskuser = Taskuser.new
   end
 
   def show
+  	render text: "404" unless user_signed_in?
+  	render text: "404" unless @task.taskusers.map(&:user_id).include?(current_user.id)
   end
 
   def new
     if user_signed_in? 
-    	@task = Task.new 
+    	@task = Task.new
     else render text: 404
     end
   end
 
   def edit
-  	render text: 404 unless @task.user.id == current_user.id
+  	render text: 404 unless @task.taskusers.map(&:user_id).include?(current_user.id)
   end
+
  def create
     @task = Task.new(task_params)
-
+    if Taskuser.count == 0
+    	Taskuser.create(user_id: current_user.id, task_id: 1)
+    else
+    	Taskuser.create(user_id: current_user.id, task_id: Task.last.id + 1)
+    end
     respond_to do |format|
       if @task.save
         format.html { redirect_to @task, notice: 'Task was successfully created.' }
@@ -46,7 +55,7 @@ class TasksController < ApplicationController
   end
 
 	def destroy
-		if (user_signed_in? && @task.user.user_id == current_user.id)
+		if (user_signed_in? && @task.author == current_user.email)
 			@task.destroy
 			respond_to do |format|
 				format.html { redirect_to tasks_url, notice: 'Task was successfully destroyed.' }
@@ -61,6 +70,6 @@ class TasksController < ApplicationController
     end
 
     def task_params
-      params.require(:task).permit(:task_name, :task_desc).merge(user_id: current_user.id)
+      params.require(:task).permit(:task_name, :task_desc).merge(author: current_user.email)
     end
 end

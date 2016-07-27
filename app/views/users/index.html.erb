@@ -1,0 +1,12 @@
+<tbody>
+  <% @users.each do |u| %>
+    <tr>
+      <td><%= u.id %></td>
+      <td><%= u.email %></td>
+      <td><%= u.last_sign_in_at %></td>
+      <% if (user_signed_in?) %>
+        <td><%= link_to 'Edit', edit_task_path(task) %></td>
+      <%end%>
+    </tr>
+  <% end %>
+</tbody>

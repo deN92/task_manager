@@ -1,26 +1,58 @@
 <p id="notice"><%= notice %></p>
+<p id="alert"><%= alert %></p>
 
 <h1>Listing Tasks</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Task name</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @tasks.each do |task| %>
+  <%if user_signed_in? %>
+  <table>
+    <thead>
       <tr>
-        <td><%= task.user.email %></td>
-        <td><%= link_to task.task_name, task_path(task) %></td>
-        <td><%= link_to 'Show', task %></td>
-        <% if (user_signed_in? && current_user.id == task.user_id) %>
-          <td><%= link_to 'Edit', edit_task_path(task) %></td>
-          <td><%= link_to 'Destroy', task, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-        <%end%>
+       <th>Task id</th>
+        <th>From other Users</th>
+        <th>Task name</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @tasks.order("id desc").each do |task| %>
+        <% if task.taskusers.map(&:user_id).include?(current_user.id)%>
+          <tr>
+            <td><%= task.id %></td>
+            <td><%= task.author unless current_user.email == task.author%></td>
+            <td><%= link_to task.task_name, task_path(task) %></td>
+            <td><%= link_to 'Show', task %></td>
+            <% if current_user.email == task.author %>
+              <td><%= link_to 'Edit', edit_task_path(task) %></td>
+              <td><%= link_to 'Destroy', task, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+              <td class = "send" id = <%= task.id%> id2 = <%= task.task_name%>>Send</td>
+            <% end %>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div id = "form_send" style="display: none">
+    <%= form_for @taskuser do |f|%>
+      <p><span>Task id:</span><br>
+      <%= f.text_field :task_id, size: 4%></p>
+      <p><span>User email:</span><br>
+      <%= f.text_field :user_id%></p>
+      <p><%= f.submit "Send"%></p>
+    <%end%>
+  </div>
+<%else%>
+  <p>If you want to create Task, please sign in or sign up</p>
+<%end%>
+<h2>Users</h2>
+<table>
+  <tbody>
+    <% @users.each do |u| %>
+      <tr>
+        <td><%= u.id %></td>
+        <td><%= u.email %></td>
       </tr>
     <% end %>
   </tbody>

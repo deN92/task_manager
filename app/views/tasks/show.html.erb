@@ -1,17 +1,28 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>User:</strong>
-  <%= @task.user_id %>
+  <strong>Author:</strong>
+  <br>
+  <%= @task.author %>
+</p>
+
+<p>
+  <strong>Users share:</strong>
+  <br>
+  <% @task.users.each do |i| %>
+  	<%= i.email%>
+  <%end%>
 </p>
 
 <p>
   <strong>Task name:</strong>
+  <br>
   <%= @task.task_name %>
 </p>
 
 <p>
   <strong>Task desc:</strong>
+  <br>
   <%= @task.task_desc %>
 </p>
 

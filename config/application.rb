@@ -20,7 +20,13 @@ module Tmanager
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    # Do not swallow errors in after_commit/after_rollback callbacks.
+    # Do not swallow errors in after_commit/after_rollback callbacks
+    config.action_mailer.default_url_options = { host: 'example.com' }
     config.active_record.raise_in_transactional_callbacks = true
+  config.action_mailer.delivery_method = :smtp
+    config.generators do |g|
+        g.test_framework :rspec, fixtures: true, views: false
+        g.fixture_replacement :factory_girls, dir: "spec/factories"
+    end
   end
 end
